@@ -9,6 +9,9 @@ APPS = [
     "https://alfredo-docs-assistant.streamlit.app/",
     "https://alfredo-ops-automation.streamlit.app/",
     "https://alfredo-price-stock-monitor.streamlit.app/",
+    "https://alfredo-fx-monitor.streamlit.app/",
+    "https://prediction-market-tracker.streamlit.app/",
+    "https://alfredo-sp500-tracker.streamlit.app/",
 ]
 WAKE = "Yes, get this app back up!"
 
