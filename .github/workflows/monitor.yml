@@ -1,0 +1,20 @@
+name: portfolio-monitor
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # best-effort; GitHub may delay it
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - run: python monitor.py
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          N8N_BASE_URL: https://n8n-automation-hub-t2jd.onrender.com
+          WINDOW_MIN: "90"
