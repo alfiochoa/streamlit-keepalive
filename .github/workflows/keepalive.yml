@@ -16,6 +16,13 @@ jobs:
       - run: pip install "psycopg[binary]==3.2.3"
       - run: python db_ping.py
         env: { SUPABASE_DB_URL: "${{ secrets.SUPABASE_DB_URL }}" }
+  td-usage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python td_usage.py
+        env: { TWELVE_DATA_API_KEY: "${{ secrets.TWELVE_DATA_API_KEY }}" }
   visit:
     runs-on: ubuntu-latest
     timeout-minutes: 20
