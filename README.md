@@ -5,6 +5,7 @@ headless browser every 6 hours (GitHub Actions, free for public repos), wakes an
 run (GitHub emails the owner) if an app shows an error or never loads.
 
 - Edit the app list in `keepalive.py`.
+- Static pages (the portfolio site on GitHub Pages) cannot hibernate, so they are only health-checked there (`STATIC` list: must answer 200 and contain the expected text). `monitor.py` also watches them every 30 minutes and pings the owner's phone.
 - Run manually: Actions tab -> keep-streamlit-apps-awake -> Run workflow.
 - A Monday heartbeat commit stops GitHub from disabling the schedule after 60 inactive days.
 - Only visits the owner's own public demo apps.

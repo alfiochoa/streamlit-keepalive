@@ -7,11 +7,13 @@ from datetime import datetime, timezone
 OWNER = "alfiochoa"
 REPOS = ["ai-business-data-assistant", "payment-reconciliation-pipeline", "ai-invoice-intake", "order-ops-automation",
          "price-stock-monitor", "docs-support-assistant", "executive-bi-dashboard", "fx-rate-monitor",
-         "prediction-market-tracker", "sp500-tracker", "n8n-automation-hub", "market-desk", "streamlit-keepalive"]
+         "prediction-market-tracker", "sp500-tracker", "n8n-automation-hub", "market-desk", "streamlit-keepalive", "alfiochoa.github.io"]
 URLS = {  # name -> (url, timeout s). Streamlit apps are visited by the keep-alive job itself, so only static/hosted ones here.
     "market-desk": ("https://alfiochoa.github.io/market-desk/", 30),
     "executive-bi-dashboard": ("https://alfiochoa.github.io/executive-bi-dashboard/", 30),
     "n8n demo page": ("https://alfiochoa.github.io/n8n-automation-hub/", 30),
+    "portfolio site": ("https://alfiochoa.github.io/", 30),
+    "portfolio project page": ("https://alfiochoa.github.io/projects/n8n-automation-hub/", 30),
     "n8n backend /healthz": (os.environ.get("N8N_BASE_URL", "").rstrip("/") + "/healthz", 100),  # free Render service can take ~60-90 s to wake
 }
 WINDOW = int(os.environ.get("WINDOW_MIN", "45"))

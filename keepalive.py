@@ -1,6 +1,6 @@
 """Visit each Streamlit Community Cloud app in a real browser so it counts as traffic and never hibernates.
 Wakes an app that already went to sleep. Exits non-zero if any app is unhealthy."""
-import sys, time
+import sys, time, urllib.request
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
 APPS = [
@@ -12,6 +12,12 @@ APPS = [
     "https://alfredo-fx-monitor.streamlit.app/",
     "https://prediction-market-tracker.streamlit.app/",
     "https://alfredo-sp500-tracker.streamlit.app/",
+]
+# Static pages (GitHub Pages) never hibernate, so there is nothing to wake: this only checks that they answer and still contain
+# the expected text, so a broken deploy fails this run (GitHub emails the owner) instead of going unnoticed.
+STATIC = [
+    ("https://alfiochoa.github.io/", "Alfredo Ochoa"),                                 # portfolio site (repo alfiochoa/alfiochoa.github.io)
+    ("https://alfiochoa.github.io/projects/n8n-automation-hub/", "n8n Automation Hub"),
 ]
 WAKE = "Yes, get this app back up!"
 
@@ -40,8 +46,27 @@ def check(browser, url):
     finally:
         page.close()
 
+def check_static(url, expect):
+    last = "no answer"
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "portfolio-keepalive"})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                body = r.read(400_000).decode("utf-8", "replace")
+                if r.status == 200 and expect in body:
+                    return True, "ok"
+                last = f"HTTP {r.status}, expected text {'found' if expect in body else 'missing'}"
+        except Exception as e:
+            last = type(e).__name__
+        time.sleep(5)
+    return False, last
+
 def main():
     bad = []
+    for url, expect in STATIC:
+        ok, msg = check_static(url, expect)
+        print(("OK  " if ok else "FAIL"), url, "-", msg, "(static page)", flush=True)
+        if not ok: bad.append(url)
     with sync_playwright() as p:
         browser = p.chromium.launch()
         for url in APPS:
