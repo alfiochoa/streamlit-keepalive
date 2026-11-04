@@ -29,7 +29,7 @@ def check(browser, url):
     try:
         page.goto(url, timeout=90_000)
         woke = False
-        for _ in range(12):                      # up to ~2 min for wake-up / cold start
+        for _ in range(24):                      # up to ~4 min: cold starts can exceed 2 min ("taking longer than normal")
             page.wait_for_timeout(10_000)
             for f in frames(page):
                 btn = f.get_by_role("button", name=WAKE)
@@ -69,9 +69,17 @@ def main():
         if not ok: bad.append(url)
     with sync_playwright() as p:
         browser = p.chromium.launch()
+        failed = []
         for url in APPS:
             ok, msg = check(browser, url)
             print(("OK  " if ok else "FAIL"), url, "-", msg, flush=True)
+            if not ok: failed.append(url)
+        # One retry pass with a fresh page: a slow cold start or a transient
+        # platform hiccup should not page the owner; a genuinely broken app still fails.
+        for url in failed:
+            print("RETRY", url, flush=True)
+            ok, msg = check(browser, url)
+            print(("OK  " if ok else "FAIL"), url, "-", msg, "(retry)", flush=True)
             if not ok: bad.append(url)
         browser.close()
     sys.exit(1 if bad else 0)

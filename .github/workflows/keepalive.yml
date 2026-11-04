@@ -25,7 +25,8 @@ jobs:
         env: { TWELVE_DATA_API_KEY: "${{ secrets.TWELVE_DATA_API_KEY }}" }
   visit:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # 8 apps x up to 4 min each, plus one retry pass over any that failed.
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
